@@ -4,7 +4,7 @@ const pkg = require('./package')
 const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin')
 
 module.exports = {
-  ssr: true,
+  ssr: false,
 
   /*
   ** Headers of the page
