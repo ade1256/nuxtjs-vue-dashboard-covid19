@@ -21,10 +21,7 @@
         <!-- Go to top -->
         <app-fab></app-fab>
         <!-- theme setting -->
-        <v-btn small fab dark falt fixed top="top" right="right" class="setting-fab" color="red"
-               @click="openThemeSettings">
-          <v-icon>settings</v-icon>
-        </v-btn>
+       
         <v-navigation-drawer
           class="setting-drawer"
           temporary
@@ -59,7 +56,6 @@
   import AppToolbar from '@/components/AppToolbar'
   import AppFab from '@/components/AppFab'
   import PageHeader from '@/components/PageHeader'
-  import ThemeSettings from '@/components/ThemeSettings'
 
   export default {
     components: {
@@ -67,7 +63,6 @@
       AppToolbar,
       AppFab,
       PageHeader,
-      ThemeSettings
     },
     data: () => ({
       expanded: true,
