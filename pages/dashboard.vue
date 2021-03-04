@@ -43,26 +43,25 @@
         Download to Excel
       </download-excel>
     </v-container>
-<v-container grid-list-xl fluid>
-    <v-flex sm12>
-      <h3>Data Indonesia</h3>
-    </v-flex>
-    <v-flex lg12>
-      <v-data-table
-        :headers="basic.headers"
-        :items="basic.items"
-        hide-actions
-        class="elevation-1"
-      >
-        <template slot="items" slot-scope="props">
-          <td>{{ props.item.Provinsi }}</td>
-          <td>{{ props.item.Kasus_Posi }}</td>
-          <td>{{ props.item.Kasus_Semb }}</td>
-          <td>{{ props.item.Kasus_Meni }}</td>
-        </template>
-      </v-data-table>
-    </v-flex>
-    <download-excel
+    <v-container grid-list-xl fluid v-if="type === 'Indonesia'">
+      <v-flex sm12>
+        <h3>Data Indonesia</h3>
+      </v-flex>
+      <v-flex lg12>
+        <v-data-table
+          :headers="basic.headers"
+          :items="basic.items"
+          class="elevation-1"
+        >
+          <template slot="items" slot-scope="props">
+            <td>{{ props.item.Provinsi }}</td>
+            <td>{{ props.item.Kasus_Posi }}</td>
+            <td>{{ props.item.Kasus_Semb }}</td>
+            <td>{{ props.item.Kasus_Meni }}</td>
+          </template>
+        </v-data-table>
+      </v-flex>
+      <download-excel
         class="btn"
         :data="basic.items"
         :fields="basic.download.fields"
@@ -71,7 +70,36 @@
       >
         Download to Excel
       </download-excel>
-</v-container>
+    </v-container>
+
+    <v-container grid-list-xl fluid v-if="type === 'Global'">
+      <v-flex sm12>
+        <h3>Data Global</h3>
+      </v-flex>
+      <v-flex lg12>
+        <v-data-table
+          :headers="basic.headers"
+          :items="basic.items"
+          class="elevation-1"
+        >
+          <template slot="items" slot-scope="props">
+            <td>{{ props.item.Country_Region }}</td>
+            <td>{{ props.item.Confirmed }}</td>
+            <td>{{ props.item.Recovered }}</td>
+            <td>{{ props.item.Deaths }}</td>
+          </template>
+        </v-data-table>
+      </v-flex>
+      <download-excel
+        class="btn"
+        :data="basic.items"
+        :fields="basic.download.fields"
+        worksheet="Covid19 Data"
+        name="covid19_data_lengkap.xls"
+      >
+        Download to Excel
+      </download-excel>
+    </v-container>
   </div>
 </template>
 
@@ -83,6 +111,7 @@ import {
 import { thousandFormat } from "../util";
 import JsonExcel from "vue-json-excel";
 import province from "@/api/province";
+import countries from "@/api/countries";
 
 export default {
   layout: "dashboard",
@@ -129,10 +158,10 @@ export default {
         items: province,
         download: {
           fields: {
-            Region: 'Provinsi',
-            Positif: 'Kasus_Posi',
-            Sembuh: 'Kasus_Semb',
-            Meninggal: 'Kasus_Meni'
+            Region: "Provinsi",
+            Positif: "Kasus_Posi",
+            Sembuh: "Kasus_Semb",
+            Meninggal: "Kasus_Meni",
           },
           json_meta: [
             [
@@ -142,7 +171,7 @@ export default {
               },
             ],
           ],
-        }
+        },
       },
     };
   },
@@ -156,6 +185,24 @@ export default {
       if (this.type === "Indonesia") {
         const getCountryCases = await GET_COUNTRY_CASES("indonesia");
         this.totalCases = getCountryCases.data;
+         this.basic.headers = [
+         {
+            text: "Region",
+            align: "left",
+            sortable: false,
+            value: "Provinsi",
+          },
+          { text: "Positif", value: "Kasus_Posi" },
+          { text: "Sembuh", value: "Kasus_Semb" },
+          { text: "Meninggal", value: "Kasus_Meni" },
+        ]
+        this.basic.items = province
+        this.basic.download.fields = {
+            Region: "Provinsi",
+            Positif: "Kasus_Posi",
+            Sembuh: "Kasus_Semb",
+            Meninggal: "Kasus_Meni",
+        }
       } else {
         const getGlobalCases = await GET_GLOBAL_CASES();
         const temp = [];
@@ -164,6 +211,24 @@ export default {
           country: "Global",
         };
         this.totalCases = temp;
+        this.basic.headers = [
+          {
+            text: "Country",
+            align: "left",
+            sortable: false,
+            value: "Country_Region",
+          },
+          { text: "Positif", value: "Confirmed" },
+          { text: "Sembuh", value: "Recovered" },
+          { text: "Meninggal", value: "Deaths" },
+        ]
+        this.basic.items = countries
+        this.basic.download.fields = {
+            Country: "Country_Region",
+            Positif: "Confirmed",
+            Sembuh: "Recovered",
+            Meninggal: "Deaths",
+        }
       }
     },
   },
